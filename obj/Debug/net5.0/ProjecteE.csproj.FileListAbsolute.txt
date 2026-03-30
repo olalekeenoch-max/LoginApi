@@ -1,6 +1,7 @@
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\appsettings.Development.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\appsettings.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\ProjecteE.exe
+C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\Data\user.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\ProjecteE.deps.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\ProjecteE.runtimeconfig.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\ProjecteE.runtimeconfig.dev.json
@@ -17,6 +18,7 @@ C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.As
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.csproj.CoreCompileInputs.cache
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.sourcelink.json
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.RazorTargetAssemblyInfo.cache
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\scopedcss\bundle\ProjecteE.styles.css
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\staticwebassets\ProjecteE.StaticWebAssets.Manifest.cache
@@ -31,4 +33,3 @@ C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\refint\Proje
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.pdb
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ProjecteE.genruntimeconfig.cache
 C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\obj\Debug\net5.0\ref\ProjecteE.dll
-C:\Users\eolalek1\source\repos\ProjecteE\ProjecteE\bin\Debug\net5.0\Data\user.json

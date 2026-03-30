@@ -44,7 +44,7 @@ namespace LoginApi.Controllers
 
             string jsonData = System.IO.File.ReadAllText(filePath);
 
-            var users = JsonSerializer.Deserialize<List<LoginRequest>>(jsonData);
+            var users = JsonSerializer.Deserialize<List<RegisterRequest>>(jsonData);
 
             // check if user exists
             var user = users.FirstOrDefault(u =>

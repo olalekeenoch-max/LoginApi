@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "Id": 0,
+    "FirstName": "Enoch",
+    "LastName": "Olaleke",
+    "Email": "enoch@gmail.com",
+    "Password": "NewPassword123!",
+    "IsActive": true
+  },
+  {
+    "Id": 0,
+    "FirstName": "Frank",
+    "LastName": "theo",
+    "Email": "frank@gmail.com",
+    "Password": "Password123!",
+    "IsActive": true
+  },
+  {
+    "Id": 0,
+    "FirstName": "Frank",
+    "LastName": "theo",
+    "Email": "olalekeenoch@gmail.com",
+    "Password": "Password213!",
+    "IsActive": true
+  },
+  {
+    "Id": 0,
+    "FirstName": "Adenike",
+    "LastName": "Enoch",
+    "Email": "Adenike@gmail.com",
+    "Password": "Newpassword123!",
+    "IsActive": true
+  },
+  {
+    "Id": 0,
+    "FirstName": null,
+    "LastName": null,
+    "Email": "test@gmail.com",
+    "Password": "Password123!",
+    "IsActive": true
+  }
+]

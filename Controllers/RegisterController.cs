@@ -1,9 +1,9 @@
 ﻿using LoginApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using ProjecteE.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace LoginApi.Controllers
@@ -12,6 +12,12 @@ namespace LoginApi.Controllers
     [Route("api/[controller]")]
     public class RegisterController : ControllerBase
     {
+        private readonly ApplicationDbContext _db;
+
+        public RegisterController(ApplicationDbContext db)
+        {
+            _db = db;
+        }
 
         // TASK 2 — REGISTER USER
         [HttpPost]
@@ -35,40 +41,69 @@ namespace LoginApi.Controllers
                 });
             }
 
-            string filePath =
-            Path.Combine(Directory.GetCurrentDirectory(), "Data", "users.json");
-
-            if (!System.IO.File.Exists(filePath))
+            // check existing email in database (with fallback to JSON file if DB is unavailable)
+            bool emailExists = false;
+            try
             {
-                return StatusCode(500, "User database not found");
+                emailExists = _db.RegisterRequests.Any(u => u.Email == request.Email);
+            }
+            catch
+            {
+                // fallback to JSON file check
+                try
+                {
+                    var filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Data", "users.json");
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        var jsonData = System.IO.File.ReadAllText(filePath);
+                        var users = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<RegisterRequest>>(jsonData)
+                                    ?? new System.Collections.Generic.List<RegisterRequest>();
+                        emailExists = users.Any(u => u.Email == request.Email);
+                    }
+                }
+                catch
+                {
+                    // ignore fallback errors
+                }
             }
 
-            string jsonData =
-            System.IO.File.ReadAllText(filePath);
-
-            var users =
-            JsonSerializer.Deserialize<List<RegisterRequest>>(jsonData)
-            ?? new List<RegisterRequest>();
-
-            if (users.Any(u => u.Email == request.Email))
+            if (emailExists)
             {
                 return BadRequest(new { message = "Email already exists" });
             }
 
             request.IsActive = true;
 
-            users.Add(request);
-
-            string updatedJson =
-            JsonSerializer.Serialize(users,
-            new JsonSerializerOptions
+            try
             {
-                WriteIndented = true
-            });
+                _db.RegisterRequests.Add(request);
+                _db.SaveChanges();
+                return Ok(new { message = "Registration successful" });
+            }
+            catch
+            {
+                // fallback to appending to JSON file when DB write fails
+                try
+                {
+                    var filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Data", "users.json");
+                    var users = new System.Collections.Generic.List<RegisterRequest>();
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        var jsonData = System.IO.File.ReadAllText(filePath);
+                        users = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<RegisterRequest>>(jsonData)
+                                ?? new System.Collections.Generic.List<RegisterRequest>();
+                    }
 
-            System.IO.File.WriteAllText(filePath, updatedJson);
-
-            return Ok(new { message = "Registration successful" });
+                    users.Add(request);
+                    var updatedJson = System.Text.Json.JsonSerializer.Serialize(users, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                    System.IO.File.WriteAllText(filePath, updatedJson);
+                    return Ok(new { message = "Registration successful (saved to JSON fallback)" });
+                }
+                catch
+                {
+                    return StatusCode(500, new { message = "Unable to save registration" });
+                }
+            }
         }
 
 
@@ -77,35 +112,22 @@ namespace LoginApi.Controllers
         [HttpGet]
         public IActionResult GetUsers(int pageNumber = 1, int pageSize = 5)
         {
-            string filePath =
-            Path.Combine(Directory.GetCurrentDirectory(), "Data", "users.json");
+            var activeUsersQuery = _db.RegisterRequests.AsNoTracking().Where(u => u.IsActive == true);
 
-            if (!System.IO.File.Exists(filePath))
-            {
-                return StatusCode(500, "User database not found");
-            }
+            var total = activeUsersQuery.Count();
 
-            string jsonData =
-            System.IO.File.ReadAllText(filePath);
-
-            var users =
-            JsonSerializer.Deserialize<List<RegisterRequest>>(jsonData)
-            ?? new List<RegisterRequest>();
-
-            var activeUsers =
-            users.Where(u => u.IsActive == true);
-
-            var pagedUsers =
-            activeUsers
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize);
+            var users = activeUsersQuery
+                .OrderBy(u => u.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             var result = new
             {
-                TotalUsers = activeUsers.Count(),
+                TotalUsers = total,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
-                Users = pagedUsers
+                Users = users
             };
 
             return Ok(result);
@@ -118,23 +140,7 @@ namespace LoginApi.Controllers
         [Route("UpdatePassword")]
         public IActionResult UpdatePassword(UpdatePasswordRequest request)
         {
-            string filePath =
-            Path.Combine(Directory.GetCurrentDirectory(), "Data", "users.json");
-
-            if (!System.IO.File.Exists(filePath))
-            {
-                return StatusCode(500, "User database not found");
-            }
-
-            string jsonData =
-            System.IO.File.ReadAllText(filePath);
-
-            var users =
-            JsonSerializer.Deserialize<List<RegisterRequest>>(jsonData)
-            ?? new List<RegisterRequest>();
-
-            var user =
-            users.FirstOrDefault(u => u.Email == request.Email);
+            var user = _db.RegisterRequests.FirstOrDefault(u => u.Email == request.Email);
 
             if (user == null)
             {
@@ -166,15 +172,7 @@ namespace LoginApi.Controllers
             }
 
             user.Password = request.NewPassword;
-
-            string updatedJson =
-            JsonSerializer.Serialize(users,
-            new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-
-            System.IO.File.WriteAllText(filePath, updatedJson);
+            _db.SaveChanges();
 
             return Ok(new { message = "Password updated successfully" });
         }
